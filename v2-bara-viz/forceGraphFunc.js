@@ -12,7 +12,7 @@ let simulation = d3.forceSimulation()
 d3.json("miserables.json", function(error, graph) {
   if (error) throw error;
 
-  const radius = 15;
+  const radius = 50;
     
   let link = svg.append("g")
       .attr("class", "links")
@@ -52,8 +52,8 @@ d3.json("miserables.json", function(error, graph) {
     
   let lables = node.append("text")
       .text(function(d) { return d.id; })
-      .attr('y', 3)
-      .attr('text-anchor','middle');
+      .attr('text-anchor','middle')
+      .attr('alignment-baseline','middle');
 
   node.append("title")
       .text(function(d) { return d.id; });
