@@ -1,10 +1,10 @@
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+svg = d3.select("svg"),
+width = +svg.attr("width"),
+height = +svg.attr("height");
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
+let color = d3.scaleOrdinal(d3.schemeCategory20);
 
-var simulation = d3.forceSimulation()
+let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
@@ -12,33 +12,48 @@ var simulation = d3.forceSimulation()
 d3.json("miserables.json", function(error, graph) {
   if (error) throw error;
 
-  var link = svg.append("g")
+  const radius = 15;
+    
+  let link = svg.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
       .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
 
-  var node = svg.append("g")
+  //Nodes
+  let node = svg.append("g")
       .attr("class", "nodes")
     .selectAll("g")
     .data(graph.nodes)
     .enter().append("g")
     
-  var circles = node.append("circle")
-      .attr("r", 5)
+  // Circles in nodes
+  let circles = node.append("circle")
+      .attr("r", radius)
       .attr("fill", function(d) { return color(d.group); })
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
+    
+    let side = 2 * radius * Math.cos(Math.PI / 4),
+        dx = radius - side / 2;
+    
+    let g = circles.append('g')
+    .attr('transform', 'translate(' + [dx, dx] + ')');
 
-  var lables = node.append("text")
-      .text(function(d) {
-        return d.id;
-      })
-      .attr('x', 6)
-      .attr('y', 3);
+    g.append("foreignObject")
+        .attr("width", side)
+        .attr("height", side)
+        .append("xhtml:body")
+        .html("Lorem ipsum dolor sit amet, ...");
+    
+    
+  let lables = node.append("text")
+      .text(function(d) { return d.id; })
+      .attr('y', 3)
+      .attr('text-anchor','middle');
 
   node.append("title")
       .text(function(d) { return d.id; });
