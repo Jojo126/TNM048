@@ -1,10 +1,7 @@
-.axis text {
-  font: 10px sans-serif;
-}
+.axis { font: 14px sans-serif; }
 
-.axis line,
-.axis path {
+.line {
   fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+  stroke: steelblue;
+  stroke-width: 2px;
 }

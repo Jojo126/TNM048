@@ -1,34 +1,46 @@
-var customTimeFormat = timeFormat([
-  ["00:00", function () { return true; }],
-  ["06:00", function (d) { return 3 <= d.getHours() && d.getHours() < 9; }],
-  ["12:00", function (d) { return 9 <= d.getHours() && d.getHours() < 15; }],
-  ["18:00", function (d) { return 15 <= d.getHours() && d.getHours() < 21; }]
-]);
+// set the dimensions and margins of the graph
+var margin = {top: 600, right: 20, bottom: 10, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
 
-var margin = {top: 630, right: 20, bottom: 10, left: 20},
-    width = 1000 - margin.left - margin.right,
-    height = 650 - margin.top - margin.bottom;
+// parse the date / time
+var parseTime = d3.timeParse("%d-%b-%y");
 
-var x = d3.scaleLinear()
-    .domain([new Date(2012, 0, 1), new Date(2012, 0, 3)])
-    .range([0, width]);
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
 
-var xAxis = d3.axisBottom(x)
-    .tickFormat(customTimeFormat);
-
+// append the svg object to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
 var svg = d3.select("svg")
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
 
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+// Get the data
+d3.csv("data.csv", function(error, data) {
+  if (error) throw error;
 
-function timeFormat(formats) {
-  return function(date) {
-    var i = formats.length - 1, f = formats[i];
-    while (!f[1](date)) f = formats[--i];
-    return d3.functor(f[0])(date);
-  };
-}
+  // format the data
+  data.forEach(function(d) {
+      d.date = parseTime(d.date);
+      d.close = +d.close;
+  });
+
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+  // Add the X Axis
+  svg.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x)
+              .tickFormat(d3.timeFormat("%Y-%m-%d")))
+      .selectAll("text")	
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
+
+});
