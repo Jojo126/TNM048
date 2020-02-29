@@ -1,30 +1,29 @@
-svg = d3.select("svg");
-
+svg = d3.select("#force").style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
 let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(1000 / 2, 650 / 2));
+    .force("center", d3.forceCenter(1200 / 2, 600 /2));
 
 d3.json("miserables.json", function(error, graph) {
   if (error) throw error;
 
   const radius = 50;
     
-  let link = d3.select("svg").append("g")
+  let link = d3.select("#force").append("g")
       .attr("class", "links")
-    .selectAll("line")
-    .data(graph.links)
-    .enter().append("line")
+      .selectAll("line")
+      .data(graph.links)
+      .enter().append("line")
       .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
 
   //Nodes
-  let node = d3.select("svg").append("g")
+  let node = d3.select("#force").append("g")
       .attr("class", "nodes")
-    .selectAll("g")
-    .data(graph.nodes)
-    .enter().append("g")
+      .selectAll("g")
+      .data(graph.nodes)
+      .enter().append("g")
     
   // Circles in nodes
   let circles = node.append("circle")

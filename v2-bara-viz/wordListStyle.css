@@ -1,5 +1,8 @@
-div {
+#wordlistCont {
   position: absolute;
   top: 0;
-  left: 1100px;
+  right: 0;
+  width: 20vw;
+  height: 100vh;
+  background-color: yellow;
 }

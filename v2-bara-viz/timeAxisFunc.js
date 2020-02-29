@@ -1,19 +1,19 @@
 // set the dimensions and margins of the graph
-var margin = {top: 600, right: 20, bottom: 10, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+let margin = {top: 0, right: 0, bottom: 25, left: 10},
+    width = 2400 / 2 - margin.left - margin.right,
+    height = 100 / 2 - margin.top - margin.bottom;
 
 // parse the date / time
-var parseTime = d3.timeParse("%d-%b-%y");
+let parseTime = d3.timeParse("%d-%b-%y");
 
 // set the ranges
-var x = d3.scaleTime().range([0, width]);
-var y = d3.scaleLinear().range([height, 0]);
+let x = d3.scaleTime().range([0, width]);
+let y = d3.scaleLinear().range([height, 0]);
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-var svg = d3.select("svg")
+let svg = d3.select("#time").style("background-color", "green")
   .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
