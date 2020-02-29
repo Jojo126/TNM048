@@ -1,26 +1,14 @@
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="forceGraphStyle.css">
     <link rel="stylesheet" type="text/css" href="timeAxisStyle.css">
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="wordListStyle.css">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
-
-<!-------------------- Timeaxis -------------------->
-<div id="timeAxis"></div> 
-<script src="timeAxisFunc.js"></script>
-
-    
-    
-<!-------------------------- Forcegraph ---------------------------->    
-<div id="forceGraph">    
-    <svg width="960" height="600"></svg>
-</div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="forceGraphFunc.js"></script>
-    
-
-<!-------------------------- Wordlist ---------------------------->
-<div>
+<body>
+  <svg width="1500" height="650"></svg>
+  <div>
     <ol>
         <li>vnudr</li>
         <li>vnudr</li>
@@ -32,6 +20,8 @@
         <li>vnudr</li>
         <li>vnudr</li>
         <li>vnudr</li>
-        <li>vnudr</li>
     </ol>
-</div>
+  </div>
+  <script src="forceGraphFunc.js"></script>
+  <script src="timeAxisFunc.js"></script>
+</body>

@@ -5,22 +5,19 @@ var customTimeFormat = timeFormat([
   ["18:00", function (d) { return 15 <= d.getHours() && d.getHours() < 21; }]
 ]);
 
-var margin = {top: 250, right: 40, bottom: 250, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var margin = {top: 630, right: 20, bottom: 10, left: 20},
+    width = 1000 - margin.left - margin.right,
+    height = 650 - margin.top - margin.bottom;
 
-var x = d3.time.scale()
+var x = d3.scaleLinear()
     .domain([new Date(2012, 0, 1), new Date(2012, 0, 3)])
     .range([0, width]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
+var xAxis = d3.axisBottom(x)
     .tickFormat(customTimeFormat);
 
-var svg = d3.select("div").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+var svg = d3.select("svg")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 svg.append("g")

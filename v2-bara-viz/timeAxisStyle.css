@@ -8,8 +8,3 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
-
-#timeAxis {
-    width: 50%;
-    background-color: gray;
-}
