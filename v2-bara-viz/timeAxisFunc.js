@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-let margin = {top: 0, right: 0, bottom: 25, left: 10},
+let margin = {top: 0, right: 0, bottom: 25, left: 30},
     width = 2400 / 2 - margin.left - margin.right,
     height = 100 / 2 - margin.top - margin.bottom;
 
@@ -25,7 +25,6 @@ d3.csv("data.csv", function(error, data) {
   // format the data
   data.forEach(function(d) {
       d.date = parseTime(d.date);
-      d.close = +d.close;
   });
 
   // Scale the range of the data
