@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-let margin = {top: 0, right: 0, bottom: 25, left: 30},
+let margin = {top: 0, right: 0, bottom: 25, left: 40},
     width = 2400 / 2 - margin.left - margin.right,
     height = 100 / 2 - margin.top - margin.bottom;
 

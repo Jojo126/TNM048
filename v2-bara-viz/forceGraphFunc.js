@@ -8,8 +8,8 @@ let simulation = d3.forceSimulation()
 
 d3.json("miserables.json", function(error, graph) {
   if (error) throw error;
-
-  const radius = 50;
+  
+  let radius = function(d) { return d.size; };
     
   let link = d3.select("#force").append("g")
       .attr("class", "links")
@@ -34,6 +34,8 @@ d3.json("miserables.json", function(error, graph) {
           .on("drag", dragged)
           .on("end", dragended));
     
+  /*
+    // Ingen aning vad den här biten gör, men inte kompatibel med dynamiska radien
     let side = 2 * radius * Math.cos(Math.PI / 4),
         dx = radius - side / 2;
     
@@ -45,7 +47,7 @@ d3.json("miserables.json", function(error, graph) {
         .attr("height", side)
         .append("xhtml:body")
         .html("Lorem ipsum dolor sit amet, ...");
-    
+    */
     
   let lables = node.append("text")
       .text(function(d) { return d.id; })
