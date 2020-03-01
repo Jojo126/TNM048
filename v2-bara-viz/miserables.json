@@ -333,5 +333,17 @@
     {"source": "Mme.Hucheloup", "target": "Courfeyrac", "value": 1},
     {"source": "Mme.Hucheloup", "target": "Gavroche", "value": 1},
     {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
+  ], 
+  "words": [
+    {"id": 1, "word": "Word #1"},
+    {"id": 2, "word": "Word #2"},
+    {"id": 3, "word": "Word #3"},
+    {"id": 4, "word": "Word #4"},
+    {"id": 5, "word": "Word #5"},
+    {"id": 6, "word": "Word #6"},
+    {"id": 7, "word": "Word #7"},
+    {"id": 8, "word": "Word #8"},
+    {"id": 9, "word": "Word #9"},
+    {"id": 10, "word": "Word #10"}
   ]
 }
