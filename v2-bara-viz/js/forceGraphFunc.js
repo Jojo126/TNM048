@@ -32,6 +32,7 @@ d3.json("data/miserables.json", function(error, graph) {
   let circles = node.append("circle")
       .attr("r", radius)
       .attr("fill", function(d) { return color(d.group); })
+      //.attr("fill-opacity", 0.4)
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -68,11 +69,14 @@ d3.json("data/miserables.json", function(error, graph) {
       .links(graph.links);
 
   function ticked() {
+    /*
+    // Do not render lines between nodes
     link
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
+    */
 
     node
         .attr("transform", function(d) {
