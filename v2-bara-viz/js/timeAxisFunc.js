@@ -4,12 +4,13 @@
 //let format = "%Y-%m-%d",
 //    timeRange = [new Date("May 1, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
-// One day
+
 let format = "%I:%M %p",
     timeRange = [new Date("May 30, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
 // set the dimensions and margins of the graph
-let margin = {top: 0, right: 0, bottom: 25, left: 40},
+// bottom: 25 for dates
+let margin = {top: 0, right: 0, bottom: 10, left: 40},
     width = 2400 / 2 - margin.left - margin.right,
     height = 100 / 2 - margin.top - margin.bottom;
 
@@ -31,9 +32,11 @@ let svg = d3.select("#time").style("background-color", "green")
       .attr("class", "axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x)
-              .tickFormat(d3.timeFormat(format)))
+              .tickFormat(d3.timeFormat(format)));
+/*
       .selectAll("text")	
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", "rotate(-65)");
+*/
