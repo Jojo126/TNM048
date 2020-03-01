@@ -1,5 +1,4 @@
 // Todo: onclick node -> update wordlist to that subreddits ten most frequent/relevant words
-// Create brush to mark a group of nodes?
 
 svg = d3.select("#force").style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -8,6 +7,11 @@ let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(1200 / 2, 600 /2));
+
+d3.select("#force")
+      .call( d3.brush()                     // Add the brush feature using the d3.brush function
+        .extent( [ [0,0], [1228,593] ] )       // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+      );
 
 d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
@@ -23,7 +27,7 @@ d3.json("data/miserables.json", function(error, graph) {
 
   //Nodes
   let node = d3.select("#force").append("g")
-      .attr("class", "nodes")
+      .attr("class", "nodes").lower()
       .selectAll("g")
       .data(graph.nodes)
       .enter().append("g")
@@ -55,6 +59,7 @@ d3.json("data/miserables.json", function(error, graph) {
     
   let lables = node.append("text")
       .text(function(d) { return d.id; })
+      .attr("fill", "black")
       .attr('text-anchor','middle')
       .attr('alignment-baseline','middle');
 
