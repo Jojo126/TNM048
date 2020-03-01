@@ -1,3 +1,6 @@
+// Todo: onclick node -> update wordlist to that subreddits ten most frequent/relevant words
+// Create brush to mark a group of nodes?
+
 svg = d3.select("#force").style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
