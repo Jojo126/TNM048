@@ -6,3 +6,8 @@ div {
   margin: 0;
   padding: 0;
 }
+
+h1 {
+  margin: 10px 20px;
+  font-family: sans-serif;
+}
