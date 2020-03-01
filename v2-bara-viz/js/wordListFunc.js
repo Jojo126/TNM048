@@ -1,4 +1,4 @@
-d3.json("miserables.json", function(error, graph) {
+d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
   
   //console.log(graph.words);

@@ -6,7 +6,7 @@ let simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(1200 / 2, 600 /2));
 
-d3.json("miserables.json", function(error, graph) {
+d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
   
   let radius = function(d) { return d.size; };
