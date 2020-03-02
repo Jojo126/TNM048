@@ -40,8 +40,8 @@ let svg = d3.select("#time").style("background-color", "green")
 */
 
 d3.select("#time")
-      .call( d3.brushX()                     // Add the brush feature using the d3.brush function
-        .extent( [ [40,0], [1190,70] ] )       // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
+      .call( d3.brushX() // Add the brush feature using the d3.brush function
+        .extent( [ [40,0], [1190,70] ] ) // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
             .on("end", brushended));
 
 function brushended() {
