@@ -1,5 +1,3 @@
-// Todo: limit brush to stick to every hour
-
 // Entire month
 //let format = "%Y-%m-%d",
 //    timeRange = [new Date("May 1, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
@@ -10,14 +8,14 @@ let format = "%I:%M %p",
 
 // set the dimensions and margins of the graph
 // bottom: 25 for dates
-let margin = {top: 0, right: 0, bottom: 10, left: 40},
+let margin = {top: 0, right: 0, bottom: 10, left: 0},
     width = 2400 / 2 - margin.left - margin.right,
     height = 100 / 2 - margin.top - margin.bottom;
 
 // set the ranges
 let x = d3.scaleTime()
   .domain(timeRange)
-  .range([0, 1150]);
+  .range([40, 1190]);
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -44,4 +42,19 @@ let svg = d3.select("#time").style("background-color", "green")
 d3.select("#time")
       .call( d3.brushX()                     // Add the brush feature using the d3.brush function
         .extent( [ [40,0], [1190,70] ] )       // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
-      )
+            .on("end", brushended));
+
+function brushended() {
+  if (!d3.event.sourceEvent) return; // Only transition after input.
+  if (!d3.event.selection) return; // Ignore empty selections.
+  let d0 = d3.event.selection.map(x.invert),
+      d1 = d0.map(d3.timeHour.round);
+
+  // If empty when rounded, use floor & ceil instead.
+  if (d1[0] >= d1[1]) {
+    d1[0] = d3.timeHour.floor(d0[0]);
+    d1[1] = d3.timeHour.offset(d1[0]);
+  }
+
+  d3.select(this).transition().call(d3.event.target.move, d1.map(x));
+}
