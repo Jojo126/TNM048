@@ -335,15 +335,15 @@
     {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
   ], 
   "words": [
-    {"id": 1, "word": "Word #1"},
-    {"id": 2, "word": "Word #2"},
-    {"id": 3, "word": "Word #3"},
-    {"id": 4, "word": "Word #4"},
-    {"id": 5, "word": "Word #5"},
-    {"id": 6, "word": "Word #6"},
-    {"id": 7, "word": "Word #7"},
-    {"id": 8, "word": "Word #8"},
-    {"id": 9, "word": "Word #9"},
-    {"id": 10, "word": "Word #10"}
+    {"id": 1, "word": "Word #1", "amount": 1000, "ups": 59, "downs": 41},
+    {"id": 2, "word": "Word #2", "amount": 900, "ups": 59, "downs": 41},
+    {"id": 3, "word": "Word #3", "amount": 800, "ups": 89, "downs": 11},
+    {"id": 4, "word": "Word #4", "amount": 700, "ups": 89, "downs": 11},
+    {"id": 5, "word": "Word #5", "amount": 650, "ups": 82, "downs": 18},
+    {"id": 6, "word": "Word #6", "amount": 500, "ups": 89, "downs": 11},
+    {"id": 7, "word": "Word #7", "amount": 430, "ups": 8, "downs": 92},
+    {"id": 8, "word": "Word #8", "amount": 300, "ups": 89, "downs": 11},
+    {"id": 9, "word": "Word #9", "amount": 200, "ups": 8, "downs": 92},
+    {"id": 10, "word": "Word #10", "amount": 100, "ups": 9, "downs": 91}
   ]
 }

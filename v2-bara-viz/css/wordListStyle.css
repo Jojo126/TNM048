@@ -12,6 +12,47 @@ h2 {
   font-size: 1.3em;
 }
 
+h3 {
+  margin: 5px;
+}
+
+.word {
+  margin-bottom: 0;
+}
+
+.occurrences {
+  display: inline-block;
+}
+
 li {
   font-family: sans-serif;
+}
+
+.stapel {
+  display: inline-block;
+  width: 200px; 
+  height: 20px; 
+  background-color: grey;
+}
+
+.ups {
+  display: inline-block;
+  width: 50%;
+  height: 20px;
+  background-color: green;
+}
+
+.downs {
+  display: inline-block;
+  width: 30%;
+  height: 20px;
+  background-color: red;
+}
+
+ul {
+  list-style: none;
+}
+
+div {
+  display: inline-block;
 }

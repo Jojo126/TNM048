@@ -1,3 +1,5 @@
+// Todo: limit brush to stick to every hour
+
 // Entire month
 //let format = "%Y-%m-%d",
 //    timeRange = [new Date("May 1, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
