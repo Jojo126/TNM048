@@ -11,8 +11,10 @@ let simulation = d3.forceSimulation()
 
 d3.select("#force")
       .call( d3.brush()                     // Add the brush feature using the d3.brush function
-        .extent( [ [0,0], [1228,593] ] )       // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+        .extent( [ [0,0], [1228,593] ] )
+            .on("start brush", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       );
+
 
 d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
@@ -110,3 +112,34 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+
+function updateChart() {
+  
+  //Loop through every node
+  let circle = d3.selectAll("circle").nodes().map(x => {
+    
+    let transform = x.parentNode.getAttribute("transform");
+    let translate = transform.substring(transform.indexOf("(")+1, transform.indexOf(")")).split(",");
+    
+    // Get the selection coordinate
+    extent = d3.event.selection;
+  
+    // Is the circle in the selection?  
+    isBrushed = extent[0][0] <= translate[0] && extent[1][0] >= translate[0] && // Check X coordinate
+                extent[0][1] <= translate[1] && extent[1][1] >= translate[1] ; // And Y coordinate
+
+    // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
+    if(isBrushed)
+      x.style.fill = "green";
+    else
+      x.style.fill = "red";    
+  });
+}
+
+
+
+
+
+
+
+

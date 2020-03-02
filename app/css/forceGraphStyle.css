@@ -13,3 +13,8 @@ text {
   font-family: sans-serif;
   font-size: 10px;
 }
+
+.active {
+  fill: red;
+  opacity: 1
+}

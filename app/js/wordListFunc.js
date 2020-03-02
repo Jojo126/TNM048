@@ -20,7 +20,6 @@ d3.json("data/miserables.json", function(error, graph) {
     amountWidth = (wordObj.amount / maxWidth) * 100;
     upWidth = wordObj.ups/100 * amountWidth;
     downWidth = wordObj.downs/100 * amountWidth;
-    console.log(upWidth);
     
     innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="ups" style="width: ' + upWidth + '%">' + wordObj.ups + '%</span><span class="downs" style="width: ' + downWidth + '%">' + wordObj.downs + '%</span></div><div></li>';
   });
