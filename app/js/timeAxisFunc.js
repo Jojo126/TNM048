@@ -3,7 +3,7 @@
 //    timeRange = [new Date("May 1, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
 
-let format = "%I:%M %p",
+let format = "%H:%M",
     timeRange = [new Date("May 30, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
 // set the dimensions and margins of the graph
