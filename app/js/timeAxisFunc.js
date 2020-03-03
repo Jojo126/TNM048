@@ -49,7 +49,7 @@ d3.select("#time")
 d3.select("#timeCont")
   .select("svg")
   .attr("preserveAspectRatio", "xMidYMid meet")
-  .attr("viewBox", "15 25 "+ width + " " + height);
+  .attr("viewBox", "15 25 " + width + " " + height);
 
 function brushended() {
   if (!d3.event.sourceEvent) return; // Only transition after input.

@@ -5,7 +5,9 @@
   width: 20vw;
   height: 100vh;
   border-left: 3px solid #dadada;
+  background-color: white;
   overflow-y: scroll;
+  min-width: 260px;
 }
 
 #wordlist {
