@@ -4,7 +4,7 @@
   right: 0;
   width: 20vw;
   height: 100vh;
-  background-color: yellow;
+  border-left: 3px solid #dadada;
   overflow-y: scroll;
 }
 
@@ -16,6 +16,7 @@
 h2 {
   font-family: sans-serif;
   font-size: 1.3em;
+  margin-left: 15px;
 }
 
 .word {
@@ -39,14 +40,14 @@ li {
   display: inline-block;
   width: 200px;
   height: 20px;
-  background-color: grey;
+  background-color: #dadada;
 }
 
 .ups {
   display: inline-block;
   width: 50%;
   height: 20px;
-  background-color: green;
+  background-color: #97df89;
   text-align: center;
 }
 
@@ -54,7 +55,7 @@ li {
   display: inline-block;
   width: 30%;
   height: 20px;
-  background-color: red;
+  background-color: #ff9897;
   text-align: center;
 }
 

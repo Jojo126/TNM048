@@ -1,6 +1,6 @@
 // Todo: onclick node -> update wordlist to that subreddits ten most frequent/relevant words
 
-svg = d3.select("#force").style("background-color", "blue");
+svg = d3.select("#force");//.style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
 let widthFG = 1200;
@@ -24,8 +24,11 @@ let brush = d3.select("#force")
       );
 
 // Remove default fill from brush selection
-brush.selectAll("rect")
-    .attr("fill", "none");
+brush.select(".selection")
+    .attr("fill", "none")
+    .attr("stroke-width", "3")
+    .attr("stroke", "#dadada");
+
 
 d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
@@ -150,6 +153,6 @@ function updateChart() {
     if(isBrushed)
       x.style.opacity = 1;
     else
-      x.style.opacity = 0.5;
+      x.style.opacity = 0.3;
   });
 }

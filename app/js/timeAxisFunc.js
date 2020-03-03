@@ -19,7 +19,7 @@ let x = d3.scaleTime()
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-let svg = d3.select("#time").style("background-color", "green")
+let svg = d3.select("#time")//.style("background-color", "green")
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
