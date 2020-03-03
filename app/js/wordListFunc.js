@@ -21,7 +21,7 @@ d3.json("data/miserables.json", function(error, graph) {
     upWidth = wordObj.ups/100 * amountWidth;
     downWidth = wordObj.downs/100 * amountWidth;
     
-    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="ups" style="width: ' + upWidth + '%">' + wordObj.ups + '%</span><span class="downs" style="width: ' + downWidth + '%">' + wordObj.downs + '%</span></div><div></li>';
+    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="ups" title="' + wordObj.ups + '%" style="width: ' + upWidth + '%">' + wordObj.ups + '%</span><span class="downs" title="' + wordObj.downs + '%" style="width: ' + downWidth + '%">' + wordObj.downs + '%</span></div><div></li>';
   });
   
   document.getElementById("wordlist").innerHTML = innerHTML;

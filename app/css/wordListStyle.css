@@ -37,6 +37,7 @@ li {
   width: 50%;
   height: 20px;
   background-color: green;
+  text-align: center;
 }
 
 .downs {
@@ -44,6 +45,7 @@ li {
   width: 30%;
   height: 20px;
   background-color: red;
+  text-align: center;
 }
 
 ul {
