@@ -3,11 +3,19 @@
 svg = d3.select("#force").style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
+let widthFG = 1200;
+let heightFG = 600;
+
+d3.select("#forceCont")
+  .select("svg")
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .attr("viewBox", "0 0 "+ widthFG + " " + heightFG);
+
 let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody().strength(1))
     .force("collide", d3.forceCollide()) // Add collion force for nodes
-    .force("center", d3.forceCenter(1200 / 2, 600 /2));
+    .force("center", d3.forceCenter(widthFG / 2, heightFG / 2));
 
 d3.select("#force")
       .call( d3.brush()                     // Add the brush feature using the d3.brush function
@@ -114,17 +122,17 @@ function dragended(d) {
 }
 
 function updateChart() {
-  
+
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
-    
+
     let transform = x.parentNode.getAttribute("transform");
     let translate = transform.substring(transform.indexOf("(")+1, transform.indexOf(")")).split(",");
-    
+
     // Get the selection coordinate
     extent = d3.event.selection;
-  
-    // Is the circle in the selection?  
+
+    // Is the circle in the selection?
     isBrushed = extent[0][0] <= translate[0] && extent[1][0] >= translate[0] && // Check X coordinate
                 extent[0][1] <= translate[1] && extent[1][1] >= translate[1] ; // And Y coordinate
 
@@ -132,14 +140,6 @@ function updateChart() {
     if(isBrushed)
       x.style.fill = "green";
     else
-      x.style.fill = "red";    
+      x.style.fill = "red";
   });
 }
-
-
-
-
-
-
-
-

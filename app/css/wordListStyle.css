@@ -5,6 +5,7 @@
   width: 20vw;
   height: 100vh;
   background-color: yellow;
+  overflow-y: scroll;
 }
 
 h2 {
@@ -27,8 +28,8 @@ li {
 
 .stapel {
   display: inline-block;
-  width: 200px; 
-  height: 20px; 
+  width: 200px;
+  height: 20px;
   background-color: grey;
 }
 

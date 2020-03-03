@@ -2,15 +2,14 @@
 //let format = "%Y-%m-%d",
 //    timeRange = [new Date("May 1, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
-
 let format = "%H:%M",
     timeRange = [new Date("May 30, 2015 00:00:00"), new Date("May 31, 2015 00:00:00")];
 
 // set the dimensions and margins of the graph
 // bottom: 25 for dates
 let margin = {top: 0, right: 0, bottom: 10, left: 0},
-    width = 2400 / 2 - margin.left - margin.right,
-    height = 100 / 2 - margin.top - margin.bottom;
+    width = 1200 - margin.left - margin.right,
+    height = 50 - margin.top - margin.bottom;
 
 // set the ranges
 let x = d3.scaleTime()
@@ -32,17 +31,26 @@ let svg = d3.select("#time").style("background-color", "green")
       .call(d3.axisBottom(x)
               .tickFormat(d3.timeFormat(format)));
 /*
-      .selectAll("text")	
+      .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", "rotate(-65)");
 */
 
+
+let brushHeight = document.getElementById("time").getAttribute("height").split("vh")[0] * window.innerHeight / 100;
+console.log(brushHeight)
+
 d3.select("#time")
       .call( d3.brushX() // Add the brush feature using the d3.brush function
-        .extent( [ [40,0], [1190,70] ] ) // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
+        .extent( [ [40,0], [1190,brushHeight] ] ) // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
             .on("end", brushended));
+
+d3.select("#timeCont")
+  .select("svg")
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .attr("viewBox", "15 25 "+ width + " " + height);
 
 function brushended() {
   if (!d3.event.sourceEvent) return; // Only transition after input.
