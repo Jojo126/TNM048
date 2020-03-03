@@ -23,6 +23,9 @@ let brush = d3.select("#force")
             .on("start brush end", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       );
 
+// Remove default fill from brush selection
+brush.selectAll("rect")
+    .attr("fill", "none");
 
 d3.json("data/miserables.json", function(error, graph) {
   if (error) throw error;
