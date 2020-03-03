@@ -17,10 +17,10 @@ let simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide()) // Add collion force for nodes
     .force("center", d3.forceCenter(widthFG / 2, heightFG / 2));
 
-d3.select("#force")
+let brush = d3.select("#force")
       .call( d3.brush()                     // Add the brush feature using the d3.brush function
         .extent( [ [0,0], [1228,593] ] )
-            .on("start brush", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+            .on("start brush end", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       );
 
 
@@ -131,6 +131,13 @@ function updateChart() {
 
     // Get the selection coordinate
     extent = d3.event.selection;
+    
+    // Check if brush not used
+    const selection = d3.event.selection;
+    if (selection === null) {
+      x.style.opacity = 1;
+      return;
+    }
 
     // Is the circle in the selection?
     isBrushed = extent[0][0] <= translate[0] && extent[1][0] >= translate[0] && // Check X coordinate
@@ -138,8 +145,8 @@ function updateChart() {
 
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
     if(isBrushed)
-      x.style.fill = "green";
+      x.style.opacity = 1;
     else
-      x.style.fill = "red";
+      x.style.opacity = 0.5;
   });
 }
