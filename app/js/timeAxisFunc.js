@@ -40,7 +40,6 @@ let svg = d3.select("#time").style("background-color", "green")
 
 
 let brushHeight = document.getElementById("time").getAttribute("height").split("vh")[0] * window.innerHeight / 100;
-console.log(brushHeight)
 
 d3.select("#time")
       .call( d3.brushX() // Add the brush feature using the d3.brush function
