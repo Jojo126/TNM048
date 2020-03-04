@@ -14,7 +14,7 @@ let margin = {top: 0, right: 0, bottom: 10, left: 0},
 // set the ranges
 let x = d3.scaleTime()
   .domain(timeRange)
-  .range([40, 1190]);
+  .range([40, width]);
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -23,6 +23,7 @@ let svg = d3.select("#time")//.style("background-color", "green")
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+//.call(zoom);
 
 // Add the X Axis
   svg.append("g")
@@ -38,18 +39,11 @@ let svg = d3.select("#time")//.style("background-color", "green")
         .attr("transform", "rotate(-65)");
 */
 
-
-let brushHeight = document.getElementById("time").getAttribute("height").split("vh")[0] * window.innerHeight / 100;
-
-d3.select("#time")
-      .call( d3.brushX() // Add the brush feature using the d3.brush function
-        .extent( [ [40,0], [1190,brushHeight] ] ) // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
-            .on("end", brushended));
-
-d3.select("#timeCont")
-  .select("svg")
-  .attr("preserveAspectRatio", "xMidYMid meet")
-  .attr("viewBox", "15 25 " + width + " " + height);
+let brushX = d3.brushX() // Add the brush feature using the d3.brush function
+        .extent( [ [40,0], [1190,70] ] ) // initialise the brush area: start at 40,0 and finishes at width,height: it means I select the whole graph area
+            .on("end", brushended)
+ let timeBrush = d3.select("#time")
+      .call(brushX );
 
 function brushended() {
   if (!d3.event.sourceEvent) return; // Only transition after input.
@@ -65,3 +59,36 @@ function brushended() {
 
   d3.select(this).transition().call(d3.event.target.move, d1.map(x));
 }
+
+// Rescale axis on window resize
+function redraw() { 
+  oldRange = x.range();
+  console.log(oldRange);
+  
+  // Extract the width and height that was computed by CSS.
+  width = 0.7 * window.innerWidth;
+        
+  x = d3.scaleTime()
+    .domain(timeRange)
+    .range([40, width]);
+  
+  let ratio = oldRange/x.range();      
+  
+  svg.select(".axis")
+    .call(d3.axisBottom(x)
+      .tickFormat(d3.timeFormat(format)));
+  
+  //Get selection range to use for rescaling
+  //let start = Number(d3.select("#time").select(".selection").attr("x"));
+  //let end = Number(d3.select("#time").select(".selection").attr("width")) + start;
+  //Update selections range/rescale
+  //d3.select("#time").select(".selection").attr("x", start);
+  //d3.select("#time").select(".selection").attr("width", end - start);
+  
+  /*if(start !== null && end !== null)
+     brushX.move(timeBrush, x.range().map(() => {x.range()[0] = start;x.range()[1] = end;}));*/
+      }
+
+redraw();
+      // Redraw based on the new size whenever the browser window is resized.
+      window.addEventListener("resize", redraw);
