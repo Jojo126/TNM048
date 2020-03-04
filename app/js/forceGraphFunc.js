@@ -126,6 +126,52 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+function updateWordList(e) {
+  //console.log(e);
+  let redditName = e.parentElement.childNodes[1].innerHTML;
+  let innerHTML = '';
+  let subreddits = '';
+  
+  d3.json("data/data.json", function(error, graph) {
+    if (error) throw error;
+    
+    
+    
+    let selected = graph.nodes.find(subreddit => {
+      
+      if (subreddit.id == redditName) {
+        subreddits += redditName;
+        //console.log("found: " + redditName);
+        //lägg in ord i lista
+        
+        let firstIteration = true;
+        let maxWidth,
+            amountWidth,
+            upWidth,
+            downWidth;
+        subreddit.words.forEach(word => {
+          //console.log(word);
+
+          if(firstIteration) {
+            maxWidth = word.score;
+            firstIteration = false;
+          }
+
+          let upVotes = word.score; //wordObj.upVotes;
+          let downVotes = word.score; //wordObj.downVotes;
+          amountWidth = (word.amount / maxWidth) * 100 /30; // /30 only temp
+          upWidth = upVotes/100 * amountWidth;
+          downWidth = downVotes/100 * amountWidth;
+
+          innerHTML += '<li><h3 class="word">' + word.word + '</h3><div class="stapelCont"><h3 class="occurrences">' + word.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
+        });
+      };
+    });
+    document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/' + subreddits;
+    document.getElementById("wordlist").innerHTML = innerHTML;
+  });
+}
+  
 
 function updateChart() {
 
@@ -150,8 +196,11 @@ function updateChart() {
                 extent[0][1] <= translate[1] && extent[1][1] >= translate[1] ; // And Y coordinate
 
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
-    if(isBrushed)
+    if(isBrushed) {
       x.style.opacity = 1;
+      updateWordList(x);
+      
+    }
     else
       x.style.opacity = 0.3;
   });
