@@ -30,10 +30,10 @@ brush.select(".selection")
     .attr("stroke", "#dadada");
 
 
-d3.json("data/miserables.json", function(error, graph) {
+d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
-  let radius = function(d) { return d.size/2; };
+  let radius = function(d) { return d.size/500; };
 
   let link = d3.select("#force").append("g")
       .attr("class", "links")

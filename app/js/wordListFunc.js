@@ -1,27 +1,31 @@
 //
 
-d3.json("data/miserables.json", function(error, graph) {
+d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
+  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/' + graph.nodes[0].id;
+ 
   let innerHTML = '';
   let firstIteration = true;
   let maxWidth,
       amountWidth,
       upWidth,
       downWidth;
-  graph.words.forEach(wordObj => {
+  graph.nodes[0].words.forEach(wordObj => {
 
     if(firstIteration)
       {
-        maxWidth = wordObj.amount;
+        maxWidth = wordObj.score;
         firstIteration = false;
       }
 
-    amountWidth = (wordObj.amount / maxWidth) * 100;
-    upWidth = wordObj.ups/100 * amountWidth;
-    downWidth = wordObj.downs/100 * amountWidth;
+    let upVotes = wordObj.score; //wordObj.upVotes;
+    let downVotes = wordObj.score; //wordObj.downVotes;
+    amountWidth = (wordObj.amount / maxWidth) * 100 /30; // /30 only temp
+    upWidth = upVotes/100 * amountWidth;
+    downWidth = downVotes/100 * amountWidth;
 
-    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="' + wordObj.ups + '%" style="width: ' + upWidth + '%">' + wordObj.ups + '%</span><span class="downs" title="' + wordObj.downs + '%" style="width: ' + downWidth + '%">' + wordObj.downs + '%</span></div></div></li>';
+    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
   });
 
   document.getElementById("wordlist").innerHTML = innerHTML;
