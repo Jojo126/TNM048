@@ -182,6 +182,7 @@ def create_linked_graph_system(tfidf_matrix, num_subreddits):
                 links.append({'source':subreddit_list[source],'target':subreddit_list[target], 'value':weights[target]})
 
     return links           
+
                 
 def create_clusters(tfidf_matrix, num_clusters):
     # Distances between documents
@@ -191,6 +192,12 @@ def create_clusters(tfidf_matrix, num_clusters):
     cluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='euclidean', linkage='ward')
     groups = cluster.fit_predict(dist)
 
+    # Print the group hierarchy to console
+    #print_cluster_grouping(groups, num_clusters)
+        
+    return groups
+
+def print_cluster_grouping(groups, num_clusters):
     group_index = 0
     for group_id in range(num_clusters):
         print("\nGroup " + str(group_id) + " : ")
@@ -200,28 +207,6 @@ def create_clusters(tfidf_matrix, num_clusters):
             if id == group_id:
                 print(subreddit_list[index])
             index += 1
-        
-    return groups
-    #from scipy.cluster.hierarchy import ward, dendrogram
-    #linkage_matrix = ward(dist) #define the linkage_matrix using ward clustering pre-computed distances
-
-    #import matplotlib.pyplot as plt
-    #fig, ax = plt.subplots(figsize=(15, 20)) # set size
-    #ax = dendrogram(linkage_matrix, orientation="right",labels=subreddit_list);
-
-    #plt.tick_params(\
-    #    axis= 'x',          # changes apply to the x-axis
-    #    which='both',      # both major and minor ticks are affected
-    #    bottom='off',      # ticks along the bottom edge are off
-    #    top='off',         # ticks along the top edge are off
-    #    labelbottom='off')
-
-    #plt.tight_layout() #show plot with tight layout
-
-    #uncomment below to save figure
-    #plt.savefig('ward_clusters.png', dpi=200) #save figure as ward_clusters
-    #plt.close()
-
 
 # Instantiate the application
 app = Flask(__name__, template_folder='../app')
@@ -239,7 +224,8 @@ def fetch_data():
     return jsonify(data)
 
 if __name__ == "__main__":
-    data_mine()
+    # Uncomment data_mine() to create new data and save to json file
+    # data_mine()
     # Run the server
     try:
         app.run()
