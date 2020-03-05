@@ -13,6 +13,7 @@ from operator import itemgetter
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer 
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import AgglomerativeClustering
 
 # Declare globals
 subreddit_list = ['leagueoflegends', 'DotA2', 'Minecraft', 'smashbros', 'GlobalOffensive', 'speedrun', 'Steam', 'nintendo', 'Games', 'gaming', 'boardgames', 'rpg', 'Overwatch',
@@ -104,7 +105,7 @@ def data_mine():
     nodes = []
     term_documents = []
 
-    print("Loading data..")
+    print("Creating word frequency vocabularies..")
     with connection:
         # Set the row format to dictionary
         connection.row_factory = dict_factory
@@ -123,43 +124,51 @@ def data_mine():
                 word_list.append(word[0])
                 words.append({'word':word[0],'amount':word[1][0], 'score':round(word[1][1] / word[1][0])})
             
-            # Save the words as a text to use in a term document matrix to compute simularities
+            # Save the top words as a text to use in a term document matrix
             term_documents.append(" ".join(word_list))
 
             # Save the subreddit as a node
-            nodes.append({'id':name, 'size':len(posts), 'words':words})
+            nodes.append({'id':name, 'size':len(posts), 'group': 0, 'words':words})
     
-    print("Finished loading data")
+    print("Word frequency vocabularies complete!")
+
+    # Create a sparse document matrix with the word counts
+    vectorizer = CountVectorizer()
+    count_matrix = vectorizer.fit_transform(term_documents)
+
+    # Transform the word counts matrix to a tf idf matrix
+    tfidf_transformer = TfidfTransformer()
+    tfidf_matrix = tfidf_transformer.fit_transform(count_matrix)
 
     # Compute weights for the linked graph based on the cosine simularities
-    print("Computing cosine simularities..")
-    links = compute_cosine_simularities(term_documents)
+    print("Creating linked graph system..")
+    links = create_linked_graph_system(tfidf_matrix, num_subreddits=len(term_documents))
+    print("Linked graph complete!")
+
+    print("Performing hierarchical clustering..")
+    groups = create_clusters(tfidf_matrix, num_clusters=12)
+    print("Hierarchical clustering complete!")
+
+    # Add group ids to the nodes
+    index = 0
+    for node in nodes:
+        node['group'] = int(groups[index])
+        index += 1
 
     global data
     data = {'nodes':nodes, 'links':links}  
 
     # Save data to a file
     with open('data.json', 'w') as outfile:
-        print("Saving data to file")
+        print("Saving data to file..")
         json.dump(data, outfile)
 
-    print("Data mining complete")
+    print("Data mining complete!")
     
 
-def compute_cosine_simularities(documents):
-    # Create a sparse document matrix with the word counts
-    vectorizer = CountVectorizer()
-    count_matrix = vectorizer.fit_transform(documents)
-
-    # Transform the word counts matrix to a tf idf matrix
-    tfidf_transformer = TfidfTransformer()
-    tfidf_matrix = tfidf_transformer.fit_transform(count_matrix)
-
-    # Minimum tolerance value for cosine simularity
+def create_linked_graph_system(tfidf_matrix, num_subreddits):
+     # Minimum tolerance value for cosine simularity
     tolerance = 0.09
-
-    # Number of unique subreddits
-    num_subreddits = len(documents)
     
     # Create an undirected linked graph system
     links = []
@@ -171,8 +180,48 @@ def compute_cosine_simularities(documents):
         for target in range(source+1, num_subreddits):
             if weights[target] > tolerance:
                 links.append({'source':subreddit_list[source],'target':subreddit_list[target], 'value':weights[target]})
+
+    return links           
+                
+def create_clusters(tfidf_matrix, num_clusters):
+    # Distances between documents
+    dist = 1 - cosine_similarity(tfidf_matrix)
+
+    # Apply hierarchical clustering using ward linkage
+    cluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='euclidean', linkage='ward')
+    groups = cluster.fit_predict(dist)
+
+    group_index = 0
+    for group_id in range(num_clusters):
+        print("\nGroup " + str(group_id) + " : ")
+
+        index = 0
+        for id in groups:
+            if id == group_id:
+                print(subreddit_list[index])
+            index += 1
         
-    return links
+    return groups
+    #from scipy.cluster.hierarchy import ward, dendrogram
+    #linkage_matrix = ward(dist) #define the linkage_matrix using ward clustering pre-computed distances
+
+    #import matplotlib.pyplot as plt
+    #fig, ax = plt.subplots(figsize=(15, 20)) # set size
+    #ax = dendrogram(linkage_matrix, orientation="right",labels=subreddit_list);
+
+    #plt.tick_params(\
+    #    axis= 'x',          # changes apply to the x-axis
+    #    which='both',      # both major and minor ticks are affected
+    #    bottom='off',      # ticks along the bottom edge are off
+    #    top='off',         # ticks along the top edge are off
+    #    labelbottom='off')
+
+    #plt.tight_layout() #show plot with tight layout
+
+    #uncomment below to save figure
+    #plt.savefig('ward_clusters.png', dpi=200) #save figure as ward_clusters
+    #plt.close()
+
 
 # Instantiate the application
 app = Flask(__name__, template_folder='../app')
