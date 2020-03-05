@@ -34,7 +34,7 @@ brush.select(".selection")
 d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
-  let radius = function(d) { return d.size/500; };
+  let radius = function(d) { return d.size/600; };
 
   let link = d3.select("#force").append("g")
       .attr("class", "links")
@@ -142,6 +142,36 @@ function updateWordList() {
     const selection = d3.event.selection;
     if (selection === null) {
       x.style.opacity = 1;
+      d3.json("data/data.json", function(error, graph) {
+  if (error) throw error;
+
+  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/' + graph.nodes[0].id;
+ 
+  let innerHTML = '';
+  let firstIteration = true;
+  let maxWidth,
+      amountWidth,
+      upWidth,
+      downWidth;
+  graph.nodes[0].words.forEach(wordObj => {
+
+    if(firstIteration)
+      {
+        maxWidth = wordObj.score;
+        firstIteration = false;
+      }
+
+    let upVotes = wordObj.score; //wordObj.upVotes;
+    let downVotes = wordObj.score; //wordObj.downVotes;
+    amountWidth = (wordObj.amount / maxWidth) * 100 /30; // /30 only temp
+    upWidth = upVotes/100 * amountWidth;
+    downWidth = downVotes/100 * amountWidth;
+
+    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="upvotes: ' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="downvotes: ' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
+  });
+
+  document.getElementById("wordlist").innerHTML = innerHTML;
+});
       return;
     }
 
@@ -190,7 +220,7 @@ function updateWordList() {
           upWidth = upVotes/100 * amountWidth;
           downWidth = downVotes/100 * amountWidth;
 
-          innerHTML += '<li><h3 class="word">' + word.word + '</h3><div class="stapelCont"><h3 class="occurrences">' + word.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
+          innerHTML += '<li><h3 class="word">' + word.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ word.amount +'">' + word.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="upvotes: ' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="downvotes: ' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
         });
       };
     });
@@ -228,9 +258,7 @@ function updateChart() {
 
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
     if(isBrushed) {
-      x.style.opacity = 1;
-      //updateWordList(x);
-      
+      x.style.opacity = 1;      
     }
     else
       x.style.opacity = 0.3;

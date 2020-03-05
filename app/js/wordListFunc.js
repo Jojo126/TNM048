@@ -25,7 +25,7 @@ d3.json("data/data.json", function(error, graph) {
     upWidth = upVotes/100 * amountWidth;
     downWidth = downVotes/100 * amountWidth;
 
-    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
+    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span><span class="ups" title="upvotes: ' + upVotes + '%" style="width: ' + upWidth + '%">' + upVotes + '%</span><span class="downs" title="downvotes: ' + downVotes + '%" style="width: ' + downWidth + '%">' + downVotes + '%</span></div></div></li>';
   });
 
   document.getElementById("wordlist").innerHTML = innerHTML;
