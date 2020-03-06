@@ -13,7 +13,7 @@ d3.select("#forceCont")
 
 let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
-    .force("charge", d3.forceManyBody().strength(1))
+    .force("charge", d3.forceManyBody().strength(-300))
     .force("collide", d3.forceCollide()) // Add collion force for nodes
     .force("center", d3.forceCenter(widthFG / 2, heightFG / 2));
 
@@ -128,7 +128,7 @@ function dragended(d) {
   d.fy = null;
 }
 function updateWordList() {
-  
+
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
 
@@ -137,7 +137,7 @@ function updateWordList() {
 
     // Get the selection coordinate
     extent = d3.event.selection;
-    
+
     // Check if brush not used
     const selection = d3.event.selection;
     if (selection === null) {
@@ -146,7 +146,7 @@ function updateWordList() {
   if (error) throw error;
 
   document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/' + graph.nodes[0].id;
- 
+
   let innerHTML = '';
   let firstIteration = true;
   let maxWidth,
@@ -191,16 +191,14 @@ function updateWordList() {
   document.getElementById("wordlist").innerHTML = '';
   d3.json("data/data.json", function(error, graph) {
     if (error) throw error;
-    
-    
-    
+
     let selected = graph.nodes.find(subreddit => {
-      
+
       if (subreddit.id == redditName) {
         subreddits += redditName;
         //console.log("found: " + redditName);
         //lägg in ord i lista
-        
+
         let firstIteration = true;
         let maxWidth,
             amountWidth,
@@ -232,7 +230,7 @@ function updateWordList() {
       x.style.opacity = 0.3;
   });
 }
-  
+
 
 function updateChart() {
 
@@ -244,7 +242,7 @@ function updateChart() {
 
     // Get the selection coordinate
     extent = d3.event.selection;
-    
+
     // Check if brush not used
     const selection = d3.event.selection;
     if (selection === null) {
@@ -258,7 +256,7 @@ function updateChart() {
 
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
     if(isBrushed) {
-      x.style.opacity = 1;      
+      x.style.opacity = 1;
     }
     else
       x.style.opacity = 0.3;
