@@ -60,7 +60,7 @@ li {
 }
 
 .ups, .downs {
-  position: relative;
+  position: absolute;
   display: inline-block;
   height: 20px;
   text-align: center;
@@ -68,6 +68,7 @@ li {
 }
 .ups {
   background-color: #97df89;
+  left: 50%;
 }
 .downs {
   background-color: #ff9897;
