@@ -145,7 +145,7 @@ function updateWordList() {
       d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
-  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/' + graph.nodes[0].id;
+  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for all';
 
   let innerHTML = '';
   let firstIteration = true;
@@ -153,7 +153,7 @@ function updateWordList() {
       amountWidth,
       upWidth,
       downWidth;
-  graph.nodes[0].words.forEach(wordObj => {
+  graph.words.forEach(wordObj => {
 
     if(firstIteration)
       {
