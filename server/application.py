@@ -132,31 +132,29 @@ def data_mine():
     
     print("Word frequency vocabularies complete!")
 
-    # Create a sparse document matrix with the word counts
-    vectorizer = CountVectorizer()
-    count_matrix = vectorizer.fit_transform(term_documents)
+    import time
+    start = time.time()
 
-    # Transform the word counts matrix to a tf idf matrix
-    tfidf_transformer = TfidfTransformer()
-    tfidf_matrix = tfidf_transformer.fit_transform(count_matrix)
+    # Compute document simularities between the subreddits
+    simularity_matrix = create_simularity_matrix(term_documents)
 
     # Compute weights for the linked graph based on the cosine simularities
-    print("Creating linked graph system..")
-    links = create_linked_graph_system(tfidf_matrix, num_subreddits=len(term_documents))
-    print("Linked graph complete!")
+    links = create_simularity_links(simularity_matrix, num_subreddits=len(term_documents), tolerance=0.09)
 
+    # Cluster the subreddits
     print("Performing hierarchical clustering..")
-    groups = create_clusters(tfidf_matrix, num_clusters=12)
+    groups = cluster_data(simularity_matrix, num_clusters=12)
     print("Hierarchical clustering complete!")
 
     # Add group ids to the nodes
-    index = 0
-    for node in nodes:
-        node['group'] = int(groups[index])
-        index += 1
+    for index in range(len(nodes)):
+        nodes[index]['group'] = int(groups[index])
 
     global data
     data = {'nodes':nodes, 'links':links}  
+
+    end = time.time()
+    print("Elapsed time: " + str(end - start))
 
     # Save data to a file
     with open('data.json', 'w') as outfile:
@@ -166,15 +164,24 @@ def data_mine():
     print("Data mining complete!")
     
 
-def create_linked_graph_system(tfidf_matrix, num_subreddits):
-     # Minimum tolerance value for cosine simularity
-    tolerance = 0.09
-    
+def create_simularity_matrix(term_documents):
+    # Create a sparse document matrix with the word counts
+    vectorizer = CountVectorizer()
+    count_matrix = vectorizer.fit_transform(term_documents)
+
+    # Transform the word counts matrix to a tf idf matrix
+    tfidf_transformer = TfidfTransformer()
+    tfidf_matrix = tfidf_transformer.fit_transform(count_matrix)
+
+    # Compute document simularities between the different subreddits
+    return cosine_similarity(tfidf_matrix)
+
+def create_simularity_links(simularity_matrix, num_subreddits, tolerance):
     # Create an undirected linked graph system
     links = []
     for source in range (num_subreddits):
-        # Calculate the cosine simularities
-        weights = cosine_similarity(tfidf_matrix[source], tfidf_matrix)[0]
+        # Let the simularities be weights
+        weights = simularity_matrix[source]
 
         # Compare the weights between the source and targets
         for target in range(source+1, num_subreddits):
@@ -184,9 +191,9 @@ def create_linked_graph_system(tfidf_matrix, num_subreddits):
     return links           
 
                 
-def create_clusters(tfidf_matrix, num_clusters):
+def cluster_data(simularity_matrix, num_clusters):
     # Distances between documents
-    dist = 1 - cosine_similarity(tfidf_matrix)
+    dist = 1 - simularity_matrix
 
     # Apply hierarchical clustering using ward linkage
     cluster = AgglomerativeClustering(n_clusters=num_clusters, affinity='euclidean', linkage='ward')
@@ -202,11 +209,9 @@ def print_cluster_grouping(groups, num_clusters):
     for group_id in range(num_clusters):
         print("\nGroup " + str(group_id) + " : ")
 
-        index = 0
-        for id in groups:
-            if id == group_id:
+        for index in range(len(groups)):
+            if groups[index] == group_id:
                 print(subreddit_list[index])
-            index += 1
 
 # Instantiate the application
 app = Flask(__name__, template_folder='../app')
@@ -225,7 +230,7 @@ def fetch_data():
 
 if __name__ == "__main__":
     # Uncomment data_mine() to create new data and save to json file
-    # data_mine()
+    #data_mine()
     # Run the server
     try:
         app.run()
