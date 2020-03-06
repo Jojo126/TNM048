@@ -18,3 +18,8 @@ text {
   fill: red;
   opacity: 1
 }
+
+#force {
+  position: absolute;
+  bottom: 0;
+}

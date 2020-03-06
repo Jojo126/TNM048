@@ -3,8 +3,8 @@
 svg = d3.select("#force");//.style("background-color", "blue");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
-let widthFG = 1200;
-let heightFG = 600;
+let widthFG = 1365;
+let heightFG = 722;
 
 d3.select("#forceCont")
   .select("svg")
@@ -19,7 +19,7 @@ let simulation = d3.forceSimulation()
 
 let brush = d3.select("#force")
       .call( d3.brush()                     // Add the brush feature using the d3.brush function
-        .extent( [ [0,0], [1228,593] ] )
+        .extent( [ [0,0], [1365,722] ] )
             .on("start brush", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
             .on("end", updateWordList)
       );
