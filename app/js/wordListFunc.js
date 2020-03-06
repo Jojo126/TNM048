@@ -1,9 +1,7 @@
-//
-
 d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
-  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for all';
+  document.getElementById('wordListTitle').innerHTML = 'Most relevant words in Reddit';
  
   let innerHTML = '';
   let firstIteration = true;
@@ -22,6 +20,7 @@ d3.json("data/data.json", function(error, graph) {
     let score = wordObj.score;
     scoreWidth = score/100 * amountWidth;
 
+    // Render wordlist
     innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
     // If positive score -> green span to left, otherwise red span to the right
     if (score >= 0) {

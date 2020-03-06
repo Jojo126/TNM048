@@ -1,6 +1,4 @@
-// Todo: onclick node -> update wordlist to that subreddits ten most frequent/relevant words
-
-svg = d3.select("#force");//.style("background-color", "blue");
+svg = d3.select("#force");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
 let widthFG = 1365;
@@ -141,43 +139,8 @@ function updateWordList() {
     // Check if brush not used
     const selection = d3.event.selection;
     if (selection === null) {
-      x.style.opacity = 1;
-      d3.json("data/data.json", function(error, graph) {
-  if (error) throw error;
-
-  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for all';
-
-  let innerHTML = '';
-  let firstIteration = true;
-  let maxWidth,
-      amountWidth,
-      upWidth,
-      downWidth;
-  graph.words.forEach(wordObj => {
-
-    if(firstIteration)
-      {
-        amountWidth = (100 / wordObj.score) * 100/2;
-        firstIteration = false;
-      }
-    
-    let score = wordObj.score;
-    scoreWidth = score/100 * amountWidth;
-
-    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
-    // If positive score -> green span to left, otherwise red span to the right
-    if (score >= 0) {
-      innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
-    } else {
-      innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
-    }
-    // Ending of component
-    innerHTML += '</div></div></li>'; 
-  });
-
-  document.getElementById("wordlist").innerHTML = innerHTML;
-});
-      return;
+      document.getElementById('wordListTitle').innerHTML = 'No subreddit selected';
+      document.getElementById("wordlist").innerHTML = '';
     }
 
     // Is the circle in the selection?
@@ -187,55 +150,53 @@ function updateWordList() {
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
     if(isBrushed) {
       x.style.opacity = 1;
-      //updateWordList(x);
-      //console.log(e);
-  let redditName = x.parentElement.childNodes[1].innerHTML;
-  let innerHTML = '';
-  let subreddits = '';
-  document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/';
-  document.getElementById("wordlist").innerHTML = '';
-  d3.json("data/data.json", function(error, graph) {
-    if (error) throw error;
+      
+      let redditName = x.parentElement.childNodes[1].innerHTML,
+          innerHTML = '',
+          subreddits = '';
+      document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/';
+      document.getElementById("wordlist").innerHTML = '';
+      
+      d3.json("data/data.json", function(error, graph) {
+        if (error) throw error;
 
-    let selected = graph.nodes.find(subreddit => {
+        let selected = graph.nodes.find(subreddit => {
 
-      if (subreddit.id == redditName) {
-        subreddits += redditName;
-        //console.log("found: " + redditName);
-        //lägg in ord i lista
-
-        let firstIteration = true;
-        let maxWidth,
-            amountWidth,
-            upWidth,
-            downWidth;
-        subreddit.words.forEach(wordObj => {
-          //console.log(word);
-
-          if(firstIteration)
-      {
-        amountWidth = (100 / wordObj.score) * 100/2;
-        firstIteration = false;
-      }
+          if (subreddit.id == redditName) {
+            subreddits += redditName;
+            
+            let firstIteration = true,
+                maxWidth,
+                amountWidth,
+                upWidth,
+                downWidth;
+            subreddit.words.forEach(wordObj => {
+              
+              if(firstIteration)
+              {
+                amountWidth = (100 / wordObj.score) * 100/2;
+                firstIteration = false;
+              }
     
-    let score = wordObj.score;
-    scoreWidth = score/100 * amountWidth;
-
-    innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
-    // If positive score -> green span to left, otherwise red span to the right
-    if (score >= 0) {
-      innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
-    } else {
-      innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
-    }
-    // Ending of component
-    innerHTML += '</div></div></li>'; 
+              let score = wordObj.score;
+              scoreWidth = score/100 * amountWidth;
+              
+              //Render list
+              innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
+              // If positive score -> green span to left, otherwise red span to the right
+              if (score >= 0) {
+                innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
+              } else {
+                innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
+              }
+              // Ending of component
+              innerHTML += '</div></div></li>'; 
+            });
+          };
         });
-      };
-    });
-    document.getElementById('wordListTitle').innerHTML += subreddits + ' ';
-    document.getElementById("wordlist").innerHTML += innerHTML;
-  });
+        document.getElementById('wordListTitle').innerHTML += subreddits + ' ';
+        document.getElementById("wordlist").innerHTML += innerHTML;
+      });
     }
     else
       x.style.opacity = 0.3;
