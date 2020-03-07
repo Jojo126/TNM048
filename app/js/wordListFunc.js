@@ -1,8 +1,12 @@
 d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
+  wordsOfReddit(graph);
+});
+
+function wordsOfReddit(graph) {
   document.getElementById('wordListTitle').innerHTML = 'Most relevant words in Reddit';
- 
+
   let innerHTML = '';
   let firstIteration = true;
   let maxWidth,
@@ -16,7 +20,7 @@ d3.json("data/data.json", function(error, graph) {
         amountWidth = (100 / wordObj.score) * 100/2;
         firstIteration = false;
       }
-    
+
     let score = wordObj.score;
     scoreWidth = score/100 * amountWidth;
 
@@ -28,8 +32,8 @@ d3.json("data/data.json", function(error, graph) {
     } else {
       innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
     }
-    innerHTML += '</div></div></li>'; 
+    innerHTML += '</div></div></li>';
   });
 
   document.getElementById("wordlist").innerHTML = innerHTML;
-});
+}

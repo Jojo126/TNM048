@@ -1,3 +1,5 @@
+if(typeof d3v4 == "undefined") d3v4 = d3;
+
 svg = d3.select("#force");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -15,7 +17,7 @@ let simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide()) // Add collion force for nodes
     .force("center", d3.forceCenter(widthFG / 2, heightFG / 2));
 
-let brush = d3.select("#force")
+/*let brush = d3.select("#force")
       .call( d3.brush()                     // Add the brush feature using the d3.brush function
         .extent( [ [0,0], [1365,722] ] )
             .on("start brush", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
@@ -27,14 +29,31 @@ brush.select(".selection")
     .attr("fill", "none")
     .attr("stroke-width", "3")
     .attr("stroke", "#dadada");
+*/
 
+// Need these in order to zoom to work
+let gMain = svg.append("g");
+let gDraw = gMain.append("g");
+
+let zoom = d3v4.zoom()
+                // Filter => specify zoom/panning buttons (mouse wheel for zoom,
+                // left-click/middle mouse button for panning
+                .filter(function() {return !event.button || event.type !== 'wheel'})
+                .on("zoom", function () {
+                  gDraw.attr("transform", d3v4.event.transform);
+               });
+gMain.call(zoom);
 
 d3.json("data/data.json", function(error, graph) {
   if (error) throw error;
 
+  // For the brushing
+  let gBrushHolder = gDraw.append("g");
+  let gBrush = null;
+
   let radius = function(d) { return d.size/600; };
 
-  let link = d3.select("#force").append("g")
+  let link = gDraw.append("g")
       .attr("class", "links")
       .selectAll("line")
       .data(graph.links)
@@ -42,7 +61,7 @@ d3.json("data/data.json", function(error, graph) {
       .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
 
   //Nodes
-  let node = d3.select("#force").append("g")
+  let node = gDraw.append("g")
       .attr("class", "nodes").lower()
       .selectAll("g")
       .data(graph.nodes)
@@ -52,25 +71,10 @@ d3.json("data/data.json", function(error, graph) {
   let circles = node.append("circle")
       .attr("r", radius)
       .attr("fill", function(d) { return color(d.group); })
-      //.attr("fill-opacity", 0.4)
-      .call(d3.drag()
+      .call(d3v4.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
-  /*
-    // Ingen aning vad den här biten gör, men inte kompatibel med dynamiska radien
-    let side = 2 * radius * Math.cos(Math.PI / 4),
-        dx = radius - side / 2;
-
-    let g = circles.append('g')
-    .attr('transform', 'translate(' + [dx, dx] + ')');
-
-    g.append("foreignObject")
-        .attr("width", side)
-        .attr("height", side)
-        .append("xhtml:body")
-        .html("Lorem ipsum dolor sit amet, ...");
-    */
 
   let lables = node.append("text")
       .text(function(d) { return d.id; })
@@ -93,20 +97,97 @@ d3.json("data/data.json", function(error, graph) {
 
 
   function ticked() {
-    /*
-    // Do not render lines between nodes
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-    */
-
-    node
-        .attr("transform", function(d) {
+    node.attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
         })
   }
+  let brushMode = false;
+  let brushing = false;
+
+  let brush = d3v4.brush()
+                  .on("start", brushstarted)
+                  .on("brush", brushed)
+                  .on("end", brushended);
+
+
+  function brushstarted() {
+    brushing = true;
+    updateChart();
+    node.each(function(d) {
+      d.previouslySelected = shiftKey && d.selected;
+    });
+  }
+
+  function brushed() {
+    if(!d3v4.event.sourceEvent) return;
+    if(!d3v4.event.selection) return;
+
+    updateChart();
+
+    let extent = d3v4.event.selection;
+    node.classed("selected", function(d) {
+      return d.selected = d.previouslySelected ^
+             (extent[0][0] <= d.x && d.x < extent[1][0]
+             && extent[0][1] <= d.y && d.y < extent[1][1]);
+    });
+  }
+
+  function brushended() {
+    if(!d3v4.event.sourceEvent) return;
+    if(!d3v4.event.selection) return;
+    if(!gBrush) return;
+
+    gBrush.call(brush.move, null);
+
+    updateWordList();
+
+    if(!brushMode) {
+      gBrush.remove();
+      gBrush = null;
+    }
+    brushing = false;
+  }
+
+  d3v4.select("body").on("keydown", keydown);
+  d3v4.select("body").on("keyup", keyup);
+
+  let shiftKey;
+
+// When shift is down activate the brush
+  function keydown() {
+    shiftKey = d3v4.event.shiftKey;
+    if(shiftKey) {
+      if(gBrush) return;
+      brushMode = true;
+      if(!gBrush) {
+        gBrush = gBrushHolder.append("g");
+        gBrush.call(brush);
+      }
+    }
+  }
+
+// When releasing shift deactivate the brush
+  function keyup() {
+    shiftKey = false;
+    brushMode = false;
+    if(!gBrush) return;
+    if(!brushing) {
+      gBrush.remove();
+      gBrush = null;
+    }
+  }
+
+  // Right-click to cancel selection
+  svg.on("contextmenu", function() {
+    d3.event.preventDefault();
+    d3.selectAll("circle").nodes().map(x => {
+        x.style.opacity = 1;
+    });
+    //brushended();
+    wordsOfReddit(graph);//updateWordList(); // NOTE update to general words for all subreddits
+    keyup();
+  });
+
 });
 
 function dragstarted(d) {
@@ -125,6 +206,7 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+
 function updateWordList() {
 
   //Loop through every node
@@ -150,13 +232,13 @@ function updateWordList() {
     // Circle is green if in the selection, red otherwise (only for debugging purpose, see if correctly selected)
     if(isBrushed) {
       x.style.opacity = 1;
-      
+
       let redditName = x.parentElement.childNodes[1].innerHTML,
           innerHTML = '',
           subreddits = '';
       document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/';
       document.getElementById("wordlist").innerHTML = '';
-      
+
       d3.json("data/data.json", function(error, graph) {
         if (error) throw error;
 
@@ -164,23 +246,23 @@ function updateWordList() {
 
           if (subreddit.id == redditName) {
             subreddits += redditName;
-            
+
             let firstIteration = true,
                 maxWidth,
                 amountWidth,
                 upWidth,
                 downWidth;
             subreddit.words.forEach(wordObj => {
-              
+
               if(firstIteration)
               {
                 amountWidth = (100 / wordObj.score) * 100/2;
                 firstIteration = false;
               }
-    
+
               let score = wordObj.score;
               scoreWidth = score/100 * amountWidth;
-              
+
               //Render list
               innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
               // If positive score -> green span to left, otherwise red span to the right
@@ -190,7 +272,7 @@ function updateWordList() {
                 innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
               }
               // Ending of component
-              innerHTML += '</div></div></li>'; 
+              innerHTML += '</div></div></li>';
             });
           };
         });
