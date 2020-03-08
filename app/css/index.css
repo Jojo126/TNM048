@@ -12,3 +12,15 @@ h1 {
   font-family: sans-serif;
   width: 65vw;
 }
+
+#controls {
+  position: fixed;
+  left: 5px;
+  bottom: 5px;
+}
+
+h5 {
+  margin: 5px;
+  font-family: sans-serif;
+  color: rgba(0,0,0,0.7);
+}
