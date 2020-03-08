@@ -77,13 +77,13 @@ d3.json("data/data.json", function(error, graph) {
           .on("end", dragended));
 
   let lables = node.append("text")
-      .text(function(d) { return d.id; })
+      .text(function(d) { return 'r/' + d.id; })
       .attr("fill", "black")
       .attr('text-anchor','middle')
       .attr('alignment-baseline','middle');
 
   node.append("title")
-      .text(function(d) { return d.id; });
+      .text(function(d) { return 'r/' + d.id; });
 
   simulation
       .nodes(graph.nodes)
@@ -236,7 +236,7 @@ function updateWordList() {
       let redditName = x.parentElement.childNodes[1].innerHTML,
           innerHTML = '',
           subreddits = '';
-      document.getElementById('wordListTitle').innerHTML = 'Most relevant words for r/';
+      document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
       document.getElementById("wordlist").innerHTML = '';
 
       d3.json("data/data.json", function(error, graph) {
@@ -276,7 +276,7 @@ function updateWordList() {
             });
           };
         });
-        document.getElementById('wordListTitle').innerHTML += subreddits + ' ';
+        document.getElementById('wordListTitle').innerHTML += 'r/' + subreddits + ' ';
         document.getElementById("wordlist").innerHTML += innerHTML;
       });
     }
