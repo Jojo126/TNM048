@@ -32,7 +32,7 @@ brush.select(".selection")
 */
 
 // Need these in order to zoom to work
-let gMain = svg.append("g");
+let gMain = svg;
 let gDraw = gMain.append("g");
 
 let zoom = d3v4.zoom()
