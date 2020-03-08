@@ -233,7 +233,7 @@ function updateWordList() {
     if(isBrushed) {
       x.style.opacity = 1;
 
-      let redditName = x.parentElement.childNodes[1].innerHTML,
+      let redditName = x.parentElement.childNodes[1].innerHTML.substring(2),
           innerHTML = '',
           subreddits = '';
       document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
@@ -244,7 +244,10 @@ function updateWordList() {
 
         let selected = graph.nodes.find(subreddit => {
 
+          console.log(redditName);
+          console.log(subreddit.id);
           if (subreddit.id == redditName) {
+            
             subreddits += redditName;
 
             let firstIteration = true,
