@@ -208,6 +208,8 @@ function dragended(d) {
 }
 
 function updateWordList() {
+  let listOfWords = [];
+  let myMap = new Map();
 
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
@@ -236,6 +238,7 @@ function updateWordList() {
       let redditName = x.parentElement.childNodes[1].innerHTML.substring(2),
           innerHTML = '',
           subreddits = '';
+          
       document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
       document.getElementById("wordlist").innerHTML = '';
 
@@ -244,8 +247,8 @@ function updateWordList() {
 
         let selected = graph.nodes.find(subreddit => {
 
-          console.log(redditName);
-          console.log(subreddit.id);
+          //console.log(redditName);
+          //console.log(subreddit.id);
           if (subreddit.id == redditName) {
             
             subreddits += redditName;
@@ -256,7 +259,14 @@ function updateWordList() {
                 upWidth,
                 downWidth;
             subreddit.words.forEach(wordObj => {
-
+              
+              //listOfWords.push(wordObj);
+              if(!myMap.has()) {
+                myMap.set(wordObj.word, {amount: wordObj.amount, score: wordObj.score});
+              } else {
+                myMap.set(wordObj.word, {amount: wordObj.amount+myMap.get(wordObj.word).amount, score: wordObj.score+myMap.get(wordObj.word).score});
+              }
+              
               if(firstIteration)
               {
                 amountWidth = (100 / wordObj.score) * 100/2;
@@ -286,6 +296,26 @@ function updateWordList() {
     else
       x.style.opacity = 0.3;
   });
+  console.log(listOfWords);
+  console.log(myMap);
+  console.log(Array.from(myMap));
+  
+  /*
+  let result = ['banan'];
+  console.log(result);
+  result = listOfWords.reduce((res, obj) => {
+    console.log(obj);
+    if (!(obj.word in res))
+        res.__array.push(res[obj.word] = obj);
+    else {
+        res[obj.word].amount += obj.amount;
+        res[obj.word].score += obj.score;
+    }
+    return res;
+}, {__array:[]}).__array
+                .sort(function(a,b) { return b.amount - a.amount; });
+  console.log(result);*/
+  
 }
 
 
