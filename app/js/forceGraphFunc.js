@@ -365,7 +365,7 @@ function makeCorsRequest(url, selectedSubreddits) {
 		innerHTML += '</div></div></li>';
 	});
 	let titles = selectedSubreddits.split(" ");
-    console.log(titles);
+    
     titles.forEach(title => {
       document.getElementById('wordListTitle').innerHTML += 'r/' + title + ' ';
     });
