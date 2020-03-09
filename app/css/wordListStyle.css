@@ -84,3 +84,33 @@ ul {
 div {
   display: inline-block;
 }
+
+.ups { 
+  animation: posAnimation ease 1s; 
+  animation-iteration-count: 1; 
+  animation-fill-mode: forwards; 
+  transform-origin: 0% 100%;
+} 
+@keyframes posAnimation { 
+  0% { 
+    transform: scaleX(0);
+  } 
+  100% { 
+    transform: scaleX(1);
+  } 
+}
+
+.downs { 
+  animation: negAnimation ease 1s; 
+  animation-iteration-count: 1; 
+  animation-fill-mode: forwards;
+  transform-origin: 100% 50%;
+} 
+@keyframes negAnimation { 
+  0% {
+    transform: scaleX(0);
+  } 
+  100% {
+    transform: scaleX(1);
+  } 
+} 
