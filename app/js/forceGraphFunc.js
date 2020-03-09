@@ -3,6 +3,7 @@ if(typeof d3v4 == "undefined") d3v4 = d3;
 svg = d3.select("#force");
 let color = d3.scaleOrdinal(d3.schemeCategory20);
 
+// Set width/height for viewbox of force graph
 let widthFG = 1365;
 let heightFG = 722;
 
@@ -11,25 +12,12 @@ d3.select("#forceCont")
   .attr("preserveAspectRatio", "xMidYMid meet")
   .attr("viewBox", "0 0 "+ widthFG + " " + heightFG);
 
+// Create simulation for graph
 let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody().strength(-300))
     .force("collide", d3.forceCollide()) // Add collion force for nodes
     .force("center", d3.forceCenter(widthFG / 2, heightFG / 2));
-
-/*let brush = d3.select("#force")
-      .call( d3.brush()                     // Add the brush feature using the d3.brush function
-        .extent( [ [0,0], [1365,722] ] )
-            .on("start brush", updateChart)// initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-            .on("end", updateWordList)
-      );
-
-// Remove default fill from brush selection
-brush.select(".selection")
-    .attr("fill", "none")
-    .attr("stroke-width", "3")
-    .attr("stroke", "#dadada");
-*/
 
 // Need these in order to zoom to work
 let gMain = svg;
@@ -51,8 +39,10 @@ d3.json("data/data.json", function(error, graph) {
   let gBrushHolder = gDraw.append("g");
   let gBrush = null;
 
+  // Circle sizes
   let radius = function(d) { return d.size/600; };
 
+  // Links between nodes
   let link = gDraw.append("g")
       .attr("class", "links")
       .selectAll("line")
@@ -71,11 +61,13 @@ d3.json("data/data.json", function(error, graph) {
   let circles = node.append("circle")
       .attr("r", radius)
       .attr("fill", function(d) { return color(d.group); })
+      .attr("id", function(d) { return d.id; })
       .call(d3v4.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
 
+  // Node names
   let lables = node.append("text")
       .text(function(d) { return 'r/' + d.id; })
       .attr("fill", "black")
@@ -85,22 +77,26 @@ d3.json("data/data.json", function(error, graph) {
   node.append("title")
       .text(function(d) { return 'r/' + d.id; });
 
+  // Connect move-ability of nodes to simulation
   simulation
       .nodes(graph.nodes)
       .on("tick", ticked);
 
+  // Add links to simulation
   simulation.force("link")
       .links(graph.links);
 
   // Collision between nodes so they don't overlap each other
   simulation.force("collide").radius(radius);
 
-
+  // Move-abiliy for nodes
   function ticked() {
     node.attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
-        })
+        });
   }
+
+  // Brush settings
   let brushMode = false;
   let brushing = false;
 
@@ -148,12 +144,66 @@ d3.json("data/data.json", function(error, graph) {
     brushing = false;
   }
 
+  // Select one node
+  node.on("click", d => {
+    d3.event.preventDefault();
+
+    // Set correct opacity on nodes
+    d3.selectAll("circle").nodes().map(x => {
+        x.style.opacity = 0.3;
+        if(x.id == d.id) x.style.opacity = 1;
+    });
+
+    // Reset node selection
+    node.each(function(p) {
+      p.selected = false;
+      p.previouslySelected = false;
+    });
+    node.classed("selected", false);
+
+    // Update wordlist
+    document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
+    document.getElementById("wordlist").innerHTML = '';
+
+    let firstIteration = true,
+        maxWidth,
+        amountWidth,
+        upWidth,
+        downWidth
+        innerHTML = '';
+    d.words.forEach(wordObj => {
+      if(firstIteration)
+      {
+        amountWidth = (100 / wordObj.score) * 100/2;
+        firstIteration = false;
+      }
+
+      let score = wordObj.score;
+      scoreWidth = score/100 * amountWidth;
+
+      //Render list
+      innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
+      // If positive score -> green span to left, otherwise red span to the right
+      if (score >= 0) {
+        innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
+      } else {
+        innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
+      }
+      // Ending of component
+      innerHTML += '</div></div></li>';
+    });
+    document.getElementById('wordListTitle').innerHTML += 'r/' + d.id + ' ';
+    document.getElementById("wordlist").innerHTML += innerHTML;
+
+  });
+
+  // Add event listener on shift-holding for brushing
   d3v4.select("body").on("keydown", keydown);
   d3v4.select("body").on("keyup", keyup);
 
   let shiftKey;
 
-// When shift is down activate the brush
+  // When shift is down activate the brush
   function keydown() {
     shiftKey = d3v4.event.shiftKey;
     if(shiftKey) {
@@ -177,19 +227,19 @@ d3.json("data/data.json", function(error, graph) {
     }
   }
 
-  // Right-click to cancel selection
+  // Right-click to cancel selection/brushing
   svg.on("contextmenu", function() {
     d3.event.preventDefault();
     d3.selectAll("circle").nodes().map(x => {
         x.style.opacity = 1;
     });
-    //brushended();
-    wordsOfReddit(graph);//updateWordList(); // NOTE update to general words for all subreddits
+    wordsOfReddit(graph);
     keyup();
   });
 
 });
 
+// Drag functions of nodes
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
   d.fx = d.x;
@@ -208,7 +258,6 @@ function dragended(d) {
 }
 
 function updateWordList() {
-
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
 
@@ -243,11 +292,8 @@ function updateWordList() {
         if (error) throw error;
 
         let selected = graph.nodes.find(subreddit => {
-
-          console.log(redditName);
-          console.log(subreddit.id);
           if (subreddit.id == redditName) {
-            
+
             subreddits += redditName;
 
             let firstIteration = true,
@@ -290,7 +336,6 @@ function updateWordList() {
 
 
 function updateChart() {
-
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
 
