@@ -263,6 +263,9 @@ function dragended(d) {
 }
 
 function updateWordList() {
+	
+  let selectedSubreddits = [];
+  
   //Loop through every node
   let circle = d3.selectAll("circle").nodes().map(x => {
 
@@ -287,58 +290,84 @@ function updateWordList() {
     if(isBrushed) {
       x.style.opacity = 1;
 
-      let redditName = x.parentElement.childNodes[1].innerHTML.substring(2),
-          innerHTML = '',
-          subreddits = '';
-      document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
-      document.getElementById("wordlist").innerHTML = '';
-
-      d3.json("data/data.json", function(error, graph) {
-        if (error) throw error;
-
-        let selected = graph.nodes.find(subreddit => {
-          if (subreddit.id == redditName) {
-
-            subreddits += redditName;
-
-            let firstIteration = true,
-                maxWidth,
-                amountWidth,
-                upWidth,
-                downWidth;
-            subreddit.words.forEach(wordObj => {
-
-              if(firstIteration)
-              {
-                amountWidth = (100 / wordObj.score) * 100/2;
-                firstIteration = false;
-              }
-
-              let score = wordObj.score;
-              scoreWidth = score/100 * amountWidth;
-
-              //Render list
-              innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
-              // If positive score -> green span to left, otherwise red span to the right
-              if (score >= 0) {
-                innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
-              } else {
-                innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
-              }
-              // Ending of component
-              innerHTML += '</div></div></li>';
-            });
-          };
-        });
-        document.getElementById('wordListTitle').innerHTML += 'r/' + subreddits + ' ';
-        document.getElementById("wordlist").innerHTML += innerHTML;
-      });
+      let redditName = x.parentElement.childNodes[1].innerHTML.substring(2);
+      selectedSubreddits.push(redditName);
     }
     else
       x.style.opacity = 0.3;
   });
+  
+  makeCorsRequest('http://127.0.0.1:5000/get-wordlist', selectedSubreddits.join(" "));
 }
 
+// Create the XHR object.
+function createCORSRequest(method, url) {
+  let xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+	// XHR for Chrome/Firefox/Opera/Safari.
+	xhr.open(method, url, true);
+  } else if (typeof XDomainRequest != "undefined") {
+	// XDomainRequest for IE.
+	xhr = new XDomainRequest();
+	xhr.open(method, url);
+  } else {
+	// CORS not supported.
+	xhr = null;
+  }
+  return xhr;
+}
+
+// Make the actual CORS request.
+function makeCorsRequest(url, selectedSubreddits) {
+  let xhr = createCORSRequest('POST', url);
+  if (!xhr) {
+	alert('CORS not supported');
+	return;
+  }
+
+  // Response handlers.
+  xhr.onload = function() {
+	wordList = JSON.parse(xhr.responseText);
+	
+	document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
+	document.getElementById("wordlist").innerHTML = '';
+	let innerHTML = "";
+	
+	let firstIteration = true,
+		amountWidth;
+		
+	wordList.forEach( wordObj => {
+		if(firstIteration)
+		{
+			amountWidth = (100 / wordObj.score) * 100/2;
+			firstIteration = false;
+		}
+
+		let score = wordObj.score;
+		scoreWidth = score/100 * amountWidth;
+
+		//Render list
+		innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
+		// If positive score -> green span to left, otherwise red span to the right
+		if (score >= 0) {
+			innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
+		} else {
+			innerHTML += '<span class="downs" title="score: ' + score + '" style="width: ' + -1*scoreWidth + '%; left: calc(50% - ' + -2*scoreWidth + 'px)">' + score + '</span>';
+		}
+		// Ending of component
+		innerHTML += '</div></div></li>';
+	});
+	
+	document.getElementById('wordListTitle').innerHTML += 'r/' + selectedSubreddits + ' ';
+    document.getElementById("wordlist").innerHTML += innerHTML;
+  };
+
+  xhr.onerror = function() {
+	alert('Woops, there was an error making the request.');
+  };
+
+  xhr.send(selectedSubreddits);
+}
 
 function updateChart() {
   //Loop through every node

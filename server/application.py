@@ -1,5 +1,5 @@
 # Import packages
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 import json
 
@@ -246,9 +246,9 @@ def data_mine():
     data = {'nodes':nodes, 'links':links, 'words':words}  
 
     # Save data to a file
-    with open('data.json', 'w') as outfile:
-        print("Saving data to file..")
-        json.dump(data, outfile)
+    #with open('data.json', 'w') as outfile:
+        #print("Saving data to file..")
+        #json.dump(data, outfile)
 
     print("Data mining complete!")
 
@@ -266,6 +266,35 @@ def frontpage():
 def fetch_data():
     global data
     return jsonify(data)
+
+@app.route("/get-wordlist", methods=["GET", "POST"])
+def fetch_wordlist():
+    print(request.method)
+    post_data = request.data.decode('utf-8')
+    tokens = str(post_data).split()
+
+    word_list = {}
+    with open('../app/data//data.json') as json_file:
+        json_data = json.load(json_file)
+        subreddits = json_data['nodes']
+
+        for token in tokens:
+            for subreddit in subreddits:
+                if subreddit['id'] == token:
+                    for word_object in subreddit['words']:
+                        word = word_object['word']
+                        if word not in word_list.keys():
+                            word_list[word] = [word_object['amount'], word_object['score']]
+                        else:
+                            word_list[word][0] += word_object['amount']
+                            word_list[word][1] += word_object['score']
+
+    word_list_sorted = heapq.nlargest(50, word_list.items(), key=itemgetter(1))
+    word_list_dict = []
+    for word_object in word_list_sorted:
+        word_list_dict.append({'word':word_object[0],'amount':word_object[1][0], 'score':word_object[1][1]})
+
+    return jsonify(word_list_dict)
 
 if __name__ == "__main__":
     # Uncomment data_mine() to create new data and save to json file
