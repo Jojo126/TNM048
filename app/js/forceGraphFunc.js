@@ -258,26 +258,29 @@ function updateWordList() {
                 amountWidth,
                 upWidth,
                 downWidth;
-            subreddit.words.forEach(wordObj => {
-              
-              //listOfWords.push(wordObj);
-              if(!myMap.has()) {
+			
+			subreddit.words.forEach(wordObj => {
+				if(!myMap.has(wordObj.word)) {
                 myMap.set(wordObj.word, {amount: wordObj.amount, score: wordObj.score});
               } else {
-                myMap.set(wordObj.word, {amount: wordObj.amount+myMap.get(wordObj.word).amount, score: wordObj.score+myMap.get(wordObj.word).score});
-              }
-              
+				wo = myMap.get(wordObj.word);
+                myMap.set(wordObj.word, {amount: wordObj.amount+wo.amount, score: wordObj.score+wo.score});
+              }	  
+			});
+			
+            myMap.forEach( (value, key) => {
+  
               if(firstIteration)
               {
-                amountWidth = (100 / wordObj.score) * 100/2;
+                amountWidth = (100 / value.score) * 100/2;
                 firstIteration = false;
               }
 
-              let score = wordObj.score;
+              let score = value.score;
               scoreWidth = score/100 * amountWidth;
 
               //Render list
-              innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';
+              innerHTML += '<li><h3 class="word">' + key + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ value.amount +'">' + value.amount + '</h3><div class="stapel"><span class="background"></span>';
               // If positive score -> green span to left, otherwise red span to the right
               if (score >= 0) {
                 innerHTML += '<span class="ups" title="score: ' + score + '" style="width: ' + scoreWidth + '%">' + score + '</span>';
@@ -296,9 +299,10 @@ function updateWordList() {
     else
       x.style.opacity = 0.3;
   });
-  console.log(listOfWords);
-  console.log(myMap);
-  console.log(Array.from(myMap));
+
+  console.log("wuu");  
+  //console.log(myMap);
+  //console.log([ ...myMap ]);
   
   /*
   let result = ['banan'];
