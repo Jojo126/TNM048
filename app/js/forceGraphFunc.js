@@ -333,18 +333,25 @@ function makeCorsRequest(url, selectedSubreddits) {
 	document.getElementById("wordlist").innerHTML = '';
 	let innerHTML = "";
 	
-	let firstIteration = true,
-		amountWidth;
-		
-	wordList.forEach( wordObj => {
-		if(firstIteration)
-		{
-			amountWidth = (100 / wordObj.score) * 100/2;
-			firstIteration = false;
-		}
+	let maxScore = 0,
+      minScore = 0;
+    wordList.forEach(wordObj => {
 
-		let score = wordObj.score;
-		scoreWidth = score/100 * amountWidth;
+      if (maxScore < wordObj.score)
+        maxScore = wordObj.score;
+      if (minScore > wordObj.score)
+        minScore = wordObj.score;      
+    });
+      
+    let amountWidth,
+        largestScore;
+    wordList.forEach(wordObj => {
+
+      (maxScore*maxScore > minScore*minScore) ? largestScore = maxScore : largestScore = minScore;
+      amountWidth = (100 / largestScore) * 100/2;
+    
+      let score = wordObj.score;
+      scoreWidth = score/100 * amountWidth;
 
 		//Render list
 		innerHTML += '<li><h3 class="word">' + wordObj.word + '</h3><div class="stapelCont"><h3 class="occurrences" title="occurrences: '+ wordObj.amount +'">' + wordObj.amount + '</h3><div class="stapel"><span class="background"></span>';

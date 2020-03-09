@@ -17,7 +17,6 @@ function wordsOfReddit(graph) {
       minScore = wordObj.score;      
   });
   
-  console.log(maxScore);
   let innerHTML = '';
   let amountWidth,
       largestScore;
