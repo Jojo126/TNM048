@@ -7,20 +7,25 @@ d3.json("data/data.json", function(error, graph) {
 function wordsOfReddit(graph) {
   document.getElementById('wordListTitle').innerHTML = 'Most relevant words in Reddit';
 
-  let innerHTML = '';
-  let firstIteration = true;
-  let maxWidth,
-      amountWidth,
-      upWidth,
-      downWidth;
+  let maxScore = 0,
+      minScore = 0;
   graph.words.forEach(wordObj => {
 
-    if(firstIteration)
-      {
-        amountWidth = (100 / wordObj.score) * 100/2;
-        firstIteration = false;
-      }
+    if (maxScore < wordObj.score)
+      maxScore = wordObj.score;
+    if (minScore > wordObj.score)
+      minScore = wordObj.score;      
+  });
+  
+  console.log(maxScore);
+  let innerHTML = '';
+  let amountWidth,
+      largestScore;
+  graph.words.forEach(wordObj => {
 
+    (maxScore*maxScore > minScore*minScore) ? largestScore = maxScore : largestScore = minScore;
+    amountWidth = (100 / largestScore) * 100/2;
+    
     let score = wordObj.score;
     scoreWidth = score/100 * amountWidth;
 

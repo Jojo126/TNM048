@@ -164,20 +164,25 @@ d3.json("data/data.json", function(error, graph) {
     // Update wordlist
     document.getElementById('wordListTitle').innerHTML = 'Most relevant words for ';
     document.getElementById("wordlist").innerHTML = '';
-
-    let firstIteration = true,
-        maxWidth,
-        amountWidth,
-        upWidth,
-        downWidth
-        innerHTML = '';
+    
+    let maxScore = 0,
+      minScore = 0;
     d.words.forEach(wordObj => {
-      if(firstIteration)
-      {
-        amountWidth = (100 / wordObj.score) * 100/2;
-        firstIteration = false;
-      }
 
+      if (maxScore < wordObj.score)
+        maxScore = wordObj.score;
+      if (minScore > wordObj.score)
+        minScore = wordObj.score;      
+    });
+      
+    let innerHTML = '';
+    let amountWidth,
+        largestScore;
+    d.words.forEach(wordObj => {
+
+      (maxScore*maxScore > minScore*minScore) ? largestScore = maxScore : largestScore = minScore;
+      amountWidth = (100 / largestScore) * 100/2;
+    
       let score = wordObj.score;
       scoreWidth = score/100 * amountWidth;
 
