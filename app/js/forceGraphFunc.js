@@ -364,8 +364,11 @@ function makeCorsRequest(url, selectedSubreddits) {
 		// Ending of component
 		innerHTML += '</div></div></li>';
 	});
-	
-	document.getElementById('wordListTitle').innerHTML += 'r/' + selectedSubreddits + ' ';
+	let titles = selectedSubreddits.split(" ");
+    console.log(titles);
+    titles.forEach(title => {
+      document.getElementById('wordListTitle').innerHTML += 'r/' + title + ' ';
+    });
     document.getElementById("wordlist").innerHTML += innerHTML;
   };
 
