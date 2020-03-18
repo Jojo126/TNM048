@@ -1,3 +1,5 @@
+// Force graph inspired from: https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8
+// Control functions inspired from: https://bl.ocks.org/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b
 if(typeof d3v4 == "undefined") d3v4 = d3;
 
 svg = d3.select("#force");
