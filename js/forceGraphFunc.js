@@ -71,6 +71,8 @@ d3.json("data/data.json", function(error, graph) {
 	// Node names
 	let lables = node.append("text")
 		.text(function(d) { return 'r/' + d.id; })
+		//.attr("stroke", "black")
+		//.attr("stroke-width", "0.04em")
 		.attr("fill", "black")
 		.attr('text-anchor','middle')
 		.attr('alignment-baseline','middle');
@@ -360,11 +362,13 @@ function updateWordList() {
 		});
 		document.getElementById("wordlist").innerHTML += innerHTML;
 	});
-
+	
+	// Send selected subreddit to server
 	//makeCorsRequest('http://127.0.0.1:5000/get-wordlist', selectedSubreddits.join(" "));
 }
 
 // Create the XHR object.
+/*
 function createCORSRequest(method, url) {
 	let xhr = new XMLHttpRequest();
 	if ("withCredentials" in xhr) {
@@ -438,7 +442,7 @@ function makeCorsRequest(url, selectedSubreddits) {
 
 	xhr.send(selectedSubreddits);
 }
-
+*/
 function updateChart() {
 	//Loop through every node
 	let circle = d3.selectAll("circle").nodes().map(x => {

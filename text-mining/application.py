@@ -187,7 +187,7 @@ def print_cluster_grouping(groups, num_clusters):
 
 def data_mine():
     # Create a connection to the database
-    database = r"C:\Users\persj\Desktop\InfoVis\reddit-comments-may-2015\processed_database.db"
+    #database = r"C:\FULL\PATH\TO\DATABASE\processed_database.db"
     connection = create_connection(database)
 
     nodes = []
@@ -274,7 +274,7 @@ def fetch_wordlist():
     tokens = str(post_data).split()
 
     word_list = {}
-    with open('../app/data//data.json') as json_file:
+    with open('../data//data.json') as json_file:
         json_data = json.load(json_file)
         subreddits = json_data['nodes']
 
