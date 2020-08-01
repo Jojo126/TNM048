@@ -317,8 +317,8 @@ function updateWordList() {
 		}
 		// Sort the word list based on the amount of words
 		let wordListArray = Array.from(wordList);
-		wordListArray.sort((a, b) => { return a[1].amount < b[1].amount; });
-		
+		wordListArray.sort((a, b) => { return b[1].amount - a[1].amount; });
+
 		// Only keep top 50 words
 		wordListArray.splice(50);
   
